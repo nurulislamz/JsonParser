@@ -12,3 +12,24 @@ C:\Users\m_islam\OneDrive - TP ICAP\Documents\personal\JsonParser\obj\Debug\net8
 C:\Users\m_islam\OneDrive - TP ICAP\Documents\personal\JsonParser\obj\Debug\net8.0\JsonParser.pdb
 C:\Users\m_islam\OneDrive - TP ICAP\Documents\personal\JsonParser\obj\Debug\net8.0\JsonParser.genruntimeconfig.cache
 C:\Users\m_islam\OneDrive - TP ICAP\Documents\personal\JsonParser\obj\Debug\net8.0\ref\JsonParser.dll
+C:\Users\nurul\source\repos\JsonParser\bin\Debug\net8.0\JsonParser.exe
+C:\Users\nurul\source\repos\JsonParser\bin\Debug\net8.0\JsonParser.deps.json
+C:\Users\nurul\source\repos\JsonParser\bin\Debug\net8.0\JsonParser.runtimeconfig.json
+C:\Users\nurul\source\repos\JsonParser\bin\Debug\net8.0\JsonParser.dll
+C:\Users\nurul\source\repos\JsonParser\bin\Debug\net8.0\JsonParser.pdb
+C:\Users\nurul\source\repos\JsonParser\bin\Debug\net8.0\xunit.abstractions.dll
+C:\Users\nurul\source\repos\JsonParser\bin\Debug\net8.0\xunit.assert.dll
+C:\Users\nurul\source\repos\JsonParser\bin\Debug\net8.0\xunit.core.dll
+C:\Users\nurul\source\repos\JsonParser\bin\Debug\net8.0\xunit.execution.dotnet.dll
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.csproj.AssemblyReference.cache
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.AssemblyInfoInputs.cache
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.AssemblyInfo.cs
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.csproj.CoreCompileInputs.cache
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.sourcelink.json
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.csproj.Up2Date
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.dll
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\refint\JsonParser.dll
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.pdb
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\JsonParser.genruntimeconfig.cache
+C:\Users\nurul\source\repos\JsonParser\obj\Debug\net8.0\ref\JsonParser.dll
