@@ -8,121 +8,148 @@ namespace JsonParser
 {
     public class JsonLexer
     {
-        private readonly string _input;
-        private int _position { get; set; }
+        private readonly string input;
+        private int position { get; set; }
 
         public JsonLexer(string input)
         {
-            this._input = input;
-            this._position = 0;
+            this.input = input;
+            this.position = 0;
         }
 
         public List<JsonToken> Tokenize()
         {
             var tokens = new List<JsonToken>();
 
-            while (_position < _input.Length)
+            while (position < input.Length)
             {
-                char current = _input[_position];
+                char current = input[position];
 
                 if (char.IsWhiteSpace(current))
                 {
-                    _position++;
+                    position++;
                     continue;
                 }
 
                 switch (current)
                 {
                     case '{':
-                        tokens.Add(new JsonToken(JsonTokenType.CurlyOpen, "{", _position));
-                        _position++;
+                        tokens.Add(new JsonToken(JsonTokenType.CurlyOpen, "{", position));
+                        position++;
                         break;
                     case '}':
-                        tokens.Add(new JsonToken(JsonTokenType.CurlyClose, "}", _position));
-                        _position++;
+                        tokens.Add(new JsonToken(JsonTokenType.CurlyClose, "}", position));
+                        position++;
                         break;
                     case '[':
-                        tokens.Add(new JsonToken(JsonTokenType.SquareOpen, "[", _position));
-                        _position++;
+                        tokens.Add(new JsonToken(JsonTokenType.SquareOpen, "[", position));
+                        position++;
                         break;
                     case ']':
-                        tokens.Add(new JsonToken(JsonTokenType.SquareClose, "]", _position));
-                        _position++;
+                        tokens.Add(new JsonToken(JsonTokenType.SquareClose, "]", position));
+                        position++;
                         break;
                     case ':':
-                        tokens.Add(new JsonToken(JsonTokenType.Colon, ":", _position));
-                        _position++;
+                        tokens.Add(new JsonToken(JsonTokenType.Colon, ":", position));
+                        position++;
                         break;
                     case ',':
-                        tokens.Add(new JsonToken(JsonTokenType.Comma, ",", _position));
-                        _position++;
+                        tokens.Add(new JsonToken(JsonTokenType.Comma, ",", position));
+                        position++;
                         break;
                     case '"':
                         tokens.Add(ReadString());
-                        _position++;
+                        position++;
+                        break;
+                    default:
+                        if (char.IsDigit(current) || current == '-')
+                        {
+                            tokens.Add(ReadNumber());
+                        }
+                        else if (IsBooleanOrNull())
+                        {
+                            tokens.Add(ReadBooleanOrNull());
+                        }
+                        else
+                        {
+                            throw new Exception($"Unexpedcted character at {current}");
+                        }
                         break;
                 }
             }
+
+            tokens.Add(new JsonToken(JsonTokenType.EOF, null, position));
+            return tokens;
         }
 
         private JsonToken ReadString()
         {
-            int start = _position;
-            _position++;
+            int start = position;
+            position++;
 
-            while (_position < _input.Length && _input[_position] != '"') 
+            while (position < input.Length && input[position] != '"') 
             {
-                _position++;
+                position++;
             }
 
-            if (_position >= _input.Length || _input[_position] != '"')
+            if (position >= input.Length || input[position] != '"')
             {
                 throw new Exception("Unterminated string literal");
             }
 
-            _position++;
-            string value = _input.Substring(start + 1, _position - start - 2);
+            position++;
+            string value = input.Substring(start + 1, position - start - 2);
             return new JsonToken(JsonTokenType.String, value, start);
         }
 
         private JsonToken ReadNumber()
         {
-            int start = _position;
-            _position++;
+            int start = position;
+            position++;
 
-            while (_position < _input.Length && char.IsDigit(_input[_position])) 
+            if (input[position] == '-') { position++; }
+            while (position < input.Length && char.IsDigit(input[position])) 
             {
-                _position++;
+                position++;
             }
 
-            if (_position < _input.Length && _input[_position] == '.') 
+            if (position < input.Length && input[position] == '.') 
             {
-                _position++;
-                while (_position < _input.Length & char.IsDigit(_input[_position])) _position++;
+                position++;
+                while (position < input.Length & char.IsDigit(input[position])) position++;
             }
 
-            string value = _input.Substring(start, _position - start);
+            string value = input.Substring(start, position - start);
             return new JsonToken(JsonTokenType.String, value, start);
         }
 
         private JsonToken ReadBooleanOrNull()
         {
-            int start = _position;
-            if (_input.Substring(_position).StartsWith("true"))
+            int start = position;
+            if (input.Substring(position).StartsWith("true"))
             {
-                _position += 4;
+                position += 4;
                 return new JsonToken(JsonTokenType.Boolean, "true", start);
             }
-            if (_input.Substring(_position).StartsWith("false"))
+            if (input.Substring(position).StartsWith("false"))
             {
-                _position += 5;
+                position += 5;
                 return new JsonToken(JsonTokenType.Boolean, "false", start);
             }
-            if (_input.Substring(_position).StartsWith("null"))
+            if (input.Substring(position).StartsWith("null"))
             {
-                _position += 4;
+                position += 4;
                 return new JsonToken(JsonTokenType.Boolean, "null", start);
             }
+
+            throw new Exception($"Unexpected token starting at position {start}");
+        }
+
+        private bool IsBooleanOrNull()
+        {
+            return input.Substring(position).StartsWith("true") ||
+                input.Substring(position).StartsWith("false") ||
+                input.Substring(position).StartsWith("null");
         }
     }
 }
