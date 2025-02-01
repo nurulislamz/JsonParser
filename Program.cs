@@ -16,13 +16,8 @@ namespace JsonParser
             }
             Console.WriteLine($"Looking for file: {args[0]}");
 
-            if ( args[1] == "-s" ) Create 
-            if ( args[1] == "-f" ) 
-
-            string filePath = args[0];
-            JsonParser parseJson = new JsonParser(args[0]);
-
-            if (parseJson.ValidateJson()) Console.WriteLine("valid Json");
+            if (args[1] == "-s") JsonParserFactory.CreateFromString(args[1]); 
+            if ( args[1] == "-f" ) JsonParserFactory.CreateFromFile(args[1]); 
 
             return 0;
         }

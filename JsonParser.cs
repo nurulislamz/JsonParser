@@ -2,13 +2,11 @@ namespace JsonParser
 {
     public class JsonParser
     {
-        private string fileDir;
-        private string fileContents;
+        private readonly string fileContents;
         private Stack<char> bracketTrack = new Stack<char>();
-        public JsonParser(string fileDir)
+        public JsonParser(string fileContents)
         {
-            this.fileDir = fileDir;
-            this.fileContents = File.ReadAllText(fileDir);
+            this.fileContents = fileContents;
         }
 
         public bool ValidateJson()
