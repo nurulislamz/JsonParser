@@ -2,31 +2,11 @@ namespace JsonParser
 {
     public class JsonParser
     {
-        private readonly string fileContents;
-        private Stack<char> bracketTrack = new Stack<char>();
-        public JsonParser(string fileContents)
+        private readonly List<JsonToken> jsonTokens;
+        private Stack<JsonTokenType> bracketTrack = new Stack<JsonTokenType>();
+        public JsonParser(List<JsonToken> jsonTokens)
         {
-            this.fileContents = fileContents;
+            this.jsonTokens = jsonTokens;
         }
-
-        public bool ValidateJson()
-        {
-            for (int i = 0; i < this.fileContents.Length; i++)
-            {
-                if (this.fileContents[i] == '{')
-                {
-                    bracketTrack.Push(this.fileContents[i]);
-                }
-                else if (this.fileContents[i] == '}' && bracketTrack.TryPeek(out var topOfStack) && topOfStack == '{')
-                {
-                    bracketTrack.Pop();
-                }
-            }
-
-            if (bracketTrack.Count > 0) { return false; }
-            else { return true; };
-        }
-
-/*        public bool ValidateKeyValuePairs() { }
-*/    }
+      }
 }

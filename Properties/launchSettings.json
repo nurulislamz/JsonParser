@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "JsonParser": {
+      "commandName": "Project",
+      "commandLineArgs": "-f C:\\Users\\nurul\\source\\repos\\JsonParser\\Example\\empty.json"
+    }
+  }
+}

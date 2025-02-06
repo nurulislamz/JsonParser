@@ -11,10 +11,27 @@ namespace JsonParser.JsonTest
     {
 
         [Fact]
+        public void Tokenize_Should_Return_CorrectTokens_For_EmptyJson()
+        {
+            // Arrange
+            string json = "{}";
+            var lexer = new JsonLexer(json);
+
+            // Act
+            List<JsonToken> tokens = lexer.Tokenize();
+
+            // Assert
+            Assert.Equal(3, tokens.Count);
+            Assert.Equal(JsonTokenType.CurlyOpen, tokens[0].Type);
+            Assert.Equal(JsonTokenType.CurlyClose, tokens[1].Type);
+            Assert.Equal(JsonTokenType.EOF, tokens[2].Type);
+        }
+
+        [Fact]
         public void Tokenize_Should_Return_CorrectTokens_For_SimpleJson()
         {
             // Arrange
-            string json = "{\"key\": 123}";
+            string json = """{"key" : 123}""";
             var lexer = new JsonLexer(json);
 
             // Act

@@ -89,6 +89,7 @@ namespace JsonParser
 
             while (position < input.Length && input[position] != '"') 
             {
+                char test = input[position];
                 position++;
             }
 
@@ -120,7 +121,7 @@ namespace JsonParser
             }
 
             string value = input.Substring(start, position - start);
-            return new JsonToken(JsonTokenType.String, value, start);
+            return new JsonToken(JsonTokenType.Number, value, start);
         }
 
         private JsonToken ReadBooleanOrNull()
