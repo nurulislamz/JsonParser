@@ -28,22 +28,20 @@ namespace JsonParser
         {
             JsonToken currentToken = jsonTokens[position];
 
-            if (currentToken.Type == JsonTokenType.CurlyOpen) ParseObject(currentToken);
-            if (currentToken.Type == JsonTokenType.SquareOpen) ParseArray(currentToken);
+            if (currentToken.Type == JsonTokenType.CurlyOpen) ParseObject();
+            if (currentToken.Type == JsonTokenType.SquareOpen) ParseArray();
 
             return true;
         }
 
 
-        public bool ParseObject(JsonToken currentToken)
+        public bool ParseObject()
         {
-            bracketTrack.Push(currentToken.Type);
             return true;
         }
 
-        public bool ParseArray(JsonToken currentToken)
+        public bool ParseArray()
         {
-            bracketTrack.Push(currentToken.Type);
             return true;
         }
 
@@ -61,7 +59,7 @@ namespace JsonParser
         {
             return true;
         }
-    
+
         public bool ValidateBrackets()
         {
             for (int i = 0; i < this.jsonTokens.Count; i++)
@@ -90,5 +88,6 @@ namespace JsonParser
 
             if (bracketTrack.Count > 0) { return false; }
             else { return true; };
-      }
+        }
+    }
 }
