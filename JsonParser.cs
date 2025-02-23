@@ -7,140 +7,130 @@ namespace JsonParser
         private int position;
         private readonly List<JsonToken> jsonTokens;
         private Stack<JsonTokenType> bracketTrack = new Stack<JsonTokenType>();
+
+        private Dictionary<string, object> jsonObject = new Dictionary<string, object>();
+
         public JsonParser(List<JsonToken> jsonTokens)
         {
             this.position = 0;
             this.jsonTokens = jsonTokens;
         }
 
-        public JsonToken GetCurrentJsonToken() => jsonTokens[position];
+        private JsonToken GetCurrentJsonToken() => jsonTokens[position];
+
+        private JsonToken ConsumeToken(JsonTokenType expectedType)
+        {
+            JsonToken token = GetCurrentJsonToken();
+            if ( token.Type != expectedType)
+            {
+                throw new InvalidOperationException($"Expected token {expectedType} but found {token.Type}");
+            }
+            position++;
+            return token;
+        }
 
         public bool Parse()
         {
-            if (!ValidateBrackets()) throw new Exception("Invalid brackets");
-
-            return true;
-        }
-
-        // parses each symbol with a seperate recursive function.
-        public bool RecursiveDescentParser()
-        {
+            //if (!ValidateBrackets()) throw new Exception("Invalid brackets");
             ParseJson();
             return true;
         }
 
         public bool ParseJson()
         {
-            JsonToken currentToken = jsonTokens[position];
-
-            if (currentToken.Type == JsonTokenType.CurlyOpen) ParseObject();
+            ConsumeToken(JsonTokenType.CurlyOpen);
+            jsonObject = ParseObject();
             return true;
         }
 
 
         public Dictionary<string, object> ParseObject()
         {
-            ParsePair();
-        }
-
-        public List<string> ParseArray()
-        {
-            List<string> arr = new List<string>();
-
-            if (GetCurrentJsonToken().Type == JsonTokenType.SquareOpen) position++;
-
-            while (GetCurrentJsonToken().Type != JsonTokenType.SquareClose)
+            // handle Empty Json
+            if (GetCurrentJsonToken().Type == JsonTokenType.CurlyClose)
             {
-                if (GetCurrentJsonToken().Type == JsonTokenType.String) arr.Add(ParseString());
-                else if (GetCurrentJsonToken().Type == JsonTokenType.String) arr.Add(ParseNumber());
+                ConsumeToken(JsonTokenType.CurlyClose);
+                return jsonObject;
             }
-            return arr;
-        }
 
-        public KeyValuePair ParsePair()
-        {
-            string key;
-            if (GetCurrentJsonToken().Type == JsonTokenType.String)
+            KeyValuePair<string, object> pair = ParsePair();
+
+            // handle KeyValue pair
+            while (GetCurrentJsonToken().Type != JsonTokenType.CurlyClose);
             {
-                key = GetCurrentJsonToken().Value;
-                position++;
-            }
-            if (GetCurrentJsonToken().Type == JsonTokenType.Colon) position++;
+                ConsumeToken(JsonTokenType.Comma);
+                pair = ParsePair();
+                jsonObject.Add(pair.Key, pair.Value);
+            } 
 
+            ConsumeToken(JsonTokenType.CurlyClose);
+            return jsonObject;
+        }
+        public KeyValuePair<string, object> ParsePair()
+        {
+            if (GetCurrentJsonToken().Type != JsonTokenType.String) throw new InvalidOperationException("Excepted string for a key.");
+
+            string key = ConsumeToken(JsonTokenType.String).Value;
+            ConsumeToken(JsonTokenType.Colon);
             var value = ParseValue();
                 
-            return true;
+            return new KeyValuePair<string, object>(key,value);
         }
 
         public object ParseValue()
         {
-            if (GetCurrentJsonToken().Type == JsonTokenType.CurlyOpen)
+            var current = GetCurrentJsonToken();
+            switch (current.Type)
             {
-                ParseObject();
+                case JsonTokenType.CurlyOpen:
+                    ConsumeToken(JsonTokenType.CurlyOpen);
+                    var obj = ParseObject();
+                    return obj;
+                case JsonTokenType.SquareOpen:
+                    return ParseArray();
+                case JsonTokenType.String:
+                    return ConsumeToken(JsonTokenType.String).Value;
+                case JsonTokenType.Number:
+                    return ParseNumber();
+                case JsonTokenType.Boolean:
+                    return ParseBoolean();
+                default:
+                    throw new InvalidOperationException("Unexpected token type.");
             }
-            if (GetCurrentJsonToken().Type == JsonTokenType.SquareOpen)
-            {
-                ParseArray();
-            }
-            if (GetCurrentJsonToken().Type == JsonTokenType.String)
-            {
-                return GetCurrentJsonToken().Value;
-            }
-            if (GetCurrentJsonToken().Type == JsonTokenType.Number)
-            {
-                ParseNumber();
-            }
-            if (GetCurrentJsonToken().Type == JsonTokenType.Boolean)
-            {
-                ParseBoolean();
-            }
-            return true;
         }
+
+        public List<object> ParseArray()
+        {
+            List<object> arr = new List<object>();
+            ConsumeToken(JsonTokenType.SquareOpen);
+            
+            while (GetCurrentJsonToken().Type != JsonTokenType.SquareClose)
+            {
+                arr.Add(ParseValue());
+                ConsumeToken(JsonTokenType.Comma);
+            }
+            ConsumeToken(JsonTokenType.SquareClose);
+            return arr;
+        }
+
 
         public int ParseNumber()
         {
-            string currentValue = GetCurrentJsonToken().Value;
-            int pos = 0;
-
-            char c = currentValue[pos];
-
-            if (c == '"') pos++;
-            while (pos < currentValue.Length)
-            {
-                c = currentValue[pos];
-
-                if (char.IsDigit(c)) pos++;
-                else throw new Exception($"Invalid characters {c}");
-            }
-
-            if (currentValue[currentValue.Length - 1] != '"') throw new Exception("Missing colon \"");
-            
-            return currentValue;
+            JsonToken token = ConsumeToken(JsonTokenType.Number);
+            if (int.TryParse(token.Value, out int result)) return result;
+            throw new Exception("Number is invalid. Check lexer");
         }
 
         public string ParseString()
         {
-            string currentValue = GetCurrentJsonToken().Value;
-            int pos = 0;
-
-            while (pos < currentValue.Length)
-            {
-                char c = currentValue[pos];
-                if (char.IsLetter(c)) pos++;
-                if (c == '"') pos++;
-                else if (c == '\"') pos += 2;
-                else if (c == '\\') pos += 2;
-                else if (c == '\n') pos += 2;
-                else throw new Exception($"Invalid characters {c}");
-            }
-
-            if (currentValue[currentValue.Length - 1] != '"') throw new Exception("Missing colon \"");
-            return currentValue;
+            return ConsumeToken(JsonTokenType.String).Value;
         }
 
         public bool ParseBoolean()
         {
-            return true;
+            var token = ConsumeToken(JsonTokenType.Boolean);
+            if (bool.TryParse(token.Value, out bool result)) return result;
+            else throw new Exception("Could not parse Boolean");
         }
 
         public bool ValidateBrackets()

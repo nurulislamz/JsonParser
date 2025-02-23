@@ -89,8 +89,12 @@ namespace JsonParser
 
             while (position < input.Length && input[position] != '"') 
             {
-                char test = input[position];
-                position++;
+                char c = input[position];
+                if (input[position] == '\\')
+                {
+                    if (input[++position] == '\"') position += 2;
+                }
+                else position++;
             }
 
             if (position >= input.Length || input[position] != '"')
@@ -98,7 +102,6 @@ namespace JsonParser
                 throw new Exception("Unterminated string literal");
             }
 
-            position++;
             string value = input.Substring(start + 1, position - start - 2);
             return new JsonToken(JsonTokenType.String, value, start);
         }

@@ -17,22 +17,34 @@ namespace JsonParser
 
             Console.WriteLine($"Looking for file: {args[1]}");
 
+
+            JsonLexer lexer = Lexer(args);
+            List<JsonToken> listJsonTokens = lexer.Tokenize();
+
+            foreach (var token in listJsonTokens)
+            {
+                Console.WriteLine(token.Type);
+            }
+
+            JsonParser jsonParser = new JsonParser(listJsonTokens);
+            jsonParser.Parse();
+            return 0;
+        }
+
+        private static JsonLexer Lexer(string[] args)
+        {
             if (args[0] == "-s")
             {
-                JsonLexer jsonLexer = JsonLexerFactory.CreateFromString(args[1]);
+                return JsonLexerFactory.CreateFromString(args[1]);
             }
-            if (args[0] == "-f")
+            else if (args[0] == "-f")
             {
-                JsonLexer jsonLexer = JsonLexerFactory.CreateFromFile(args[1]);
-                var listJsonTokens = jsonLexer.Tokenize();
-
-                foreach (var token in listJsonTokens)
-                {
-                    Console.WriteLine(token.Type);
-                }
+                return JsonLexerFactory.CreateFromFile(args[1]);
             }
-
-            return 0;
+            else
+            {
+                throw new Exception("Invalid Argument For File Type");
+            }
         }
     }
 }
