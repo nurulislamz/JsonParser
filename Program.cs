@@ -9,7 +9,7 @@ namespace JsonParser
     {
         public static int Main(string[] args)
         {
-            if (args.Length == 0 || args.Length == 1) 
+            if (args.Length == 0 || args.Length == 1)
             {
                 Console.WriteLine("Missing file or string argument.");
                 return 2;
@@ -28,6 +28,12 @@ namespace JsonParser
 
             JsonParser jsonParser = new JsonParser(listJsonTokens);
             jsonParser.Parse();
+
+            foreach (var kvp in jsonParser.GetJsonObject())
+            {
+                Console.WriteLine($"{kvp.Key}: {(kvp.Value == null ? "null" : kvp.Value)}");
+            }
+
             return 0;
         }
 

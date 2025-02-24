@@ -2,7 +2,7 @@
   "profiles": {
     "JsonParser": {
       "commandName": "Project",
-      "commandLineArgs": "-f C:\\Users\\nurul\\source\\repos\\JsonParser\\Example\\simpleJson.json"
+      "commandLineArgs": "-f \"C:\\Users\\m_islam\\OneDrive - TP ICAP\\Documents\\personal\\JsonParser\\Example\\simpleJson.json\""
     }
   }
 }

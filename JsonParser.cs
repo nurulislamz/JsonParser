@@ -6,17 +6,22 @@ namespace JsonParser
     {
         private int position;
         private readonly List<JsonToken> jsonTokens;
-        private Stack<JsonTokenType> bracketTrack = new Stack<JsonTokenType>();
+        private Stack<JsonTokenType> bracketTrack;
 
-        private Dictionary<string, object> jsonObject = new Dictionary<string, object>();
+        private Dictionary<string, object> jsonObject { get; set; }
 
         public JsonParser(List<JsonToken> jsonTokens)
         {
             this.position = 0;
             this.jsonTokens = jsonTokens;
+
+            this.jsonObject = new Dictionary<string, object>();
+            this.bracketTrack = new Stack<JsonTokenType>();
         }
 
         private JsonToken GetCurrentJsonToken() => jsonTokens[position];
+
+        public Dictionary<string, object> GetJsonObject() => jsonObject;
 
         private JsonToken ConsumeToken(JsonTokenType expectedType)
         {
@@ -54,9 +59,10 @@ namespace JsonParser
             }
 
             KeyValuePair<string, object> pair = ParsePair();
+            jsonObject.Add(pair.Key, pair.Value);
 
             // handle KeyValue pair
-            while (GetCurrentJsonToken().Type != JsonTokenType.CurlyClose);
+            while (GetCurrentJsonToken().Type != JsonTokenType.CurlyClose)
             {
                 ConsumeToken(JsonTokenType.Comma);
                 pair = ParsePair();
@@ -94,6 +100,8 @@ namespace JsonParser
                     return ParseNumber();
                 case JsonTokenType.Boolean:
                     return ParseBoolean();
+                case JsonTokenType.Null:
+                    return ParseNull();
                 default:
                     throw new InvalidOperationException("Unexpected token type.");
             }
@@ -131,6 +139,13 @@ namespace JsonParser
             var token = ConsumeToken(JsonTokenType.Boolean);
             if (bool.TryParse(token.Value, out bool result)) return result;
             else throw new Exception("Could not parse Boolean");
+        }
+
+        public object? ParseNull()
+        {
+            var token = ConsumeToken(JsonTokenType.Null);
+            if (token?.Value == "null") return null; // default for reference types is null
+            throw new Exception("Expected null token but found unexpected value.");
         }
 
         public bool ValidateBrackets()

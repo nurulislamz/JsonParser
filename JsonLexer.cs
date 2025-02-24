@@ -102,7 +102,7 @@ namespace JsonParser
                 throw new Exception("Unterminated string literal");
             }
 
-            string value = input.Substring(start + 1, position - start - 2);
+            string value = input.Substring(start + 1, position - start - 1);
             return new JsonToken(JsonTokenType.String, value, start);
         }
 
@@ -143,7 +143,7 @@ namespace JsonParser
             if (input.Substring(position).StartsWith("null"))
             {
                 position += 4;
-                return new JsonToken(JsonTokenType.Boolean, "null", start);
+                return new JsonToken(JsonTokenType.Null, "null", start);
             }
 
             throw new Exception($"Unexpected token starting at position {start}");
