@@ -1,33 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using JsonParser;
 using Xunit;
 
-namespace JsonParser.JsonTest
+public class JsonParserTests
 {
-    public class JsonParserTests
+    [Fact]
+    public void Parse_Should_Return_CorrectDict_For_EmptyJson()
     {
+        // Arrange
+        string jsonInput = "{}";
+        JsonLexer lexer = new JsonLexer(jsonInput);
+        List<JsonToken> listJsonTokens = lexer.Tokenize();
+        JsonParser.JsonParser jsonParser = new JsonParser.JsonParser(listJsonTokens);
 
-        [Fact]
-        public void Parse_Should_Return_CorrectDict_For_EmptyJson()
-        {
-            // Arrange
+        // Act
+        jsonParser.Parse();
+        Dictionary<string, object> json = jsonParser.GetJsonObject();
 
-            // Act
+        // Assert
+        Assert.NotNull(json);
+        Assert.Empty(json); // Empty JSON should return an empty dictionary
+    }
 
-            // Assert
-        }
+   [Fact]
+    public void Parse_Should_Return_CorrectDict_For_SimpleJson()
+    {
+        // Arrange
+        string jsonInput = "{ \"name\": \"ChatGPT\", \"age\": 4 }";
+        JsonLexer lexer = new JsonLexer(jsonInput);
+        List<JsonToken> listJsonTokens = lexer.Tokenize();
+        JsonParser.JsonParser jsonParser = new JsonParser.JsonParser(listJsonTokens);
 
-        [Fact]
-        public void Tokenize_Should_Return_CorrectTokens_For_SimpleJson()
-        {
-            // Arrange
+        // Act
+        jsonParser.Parse();
+        Dictionary<string, object> json = jsonParser.GetJsonObject();
 
-            // Act
-
-            // Assert
-        }
+        // Assert
+        Assert.NotNull(json);
+        Assert.Equal(2, json.Count);
+        Assert.Equal("ChatGPT", json["name"]);
+        Assert.Equal(4, json["age"]);
     }
 }
