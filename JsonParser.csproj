@@ -10,9 +10,13 @@
 
   <ItemGroup>
     <None Remove="Example\simpleJson.json" />
+    <None Remove="Example\step4.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Example\step4.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Example\simpleJson.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

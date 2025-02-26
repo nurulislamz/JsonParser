@@ -1,7 +1,9 @@
 ﻿
 
+using System.Collections;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.ObjectiveC;
 
 namespace JsonParser
 {
@@ -29,11 +31,8 @@ namespace JsonParser
             JsonParser jsonParser = new JsonParser(listJsonTokens);
             jsonParser.Parse();
 
-            foreach (var kvp in jsonParser.GetJsonObject())
-            {
-                Console.WriteLine($"{kvp.Key}: {(kvp.Value == null ? "null" : kvp.Value)}");
-            }
-
+            Dictionary<string, object> json = jsonParser.GetJsonObject();
+            PrintNestedDictionary(json);
             return 0;
         }
 
@@ -50,6 +49,31 @@ namespace JsonParser
             else
             {
                 throw new Exception("Invalid Argument For File Type");
+            }
+        }
+
+        static void PrintNestedDictionary(object obj, int indent = 0)
+        {
+            string indentStr = new string(' ', indent * 2);
+
+            if (obj is Dictionary<string, object> dict)
+            {
+                foreach (var kvp in dict)
+                {
+                    Console.WriteLine($"{indentStr}{kvp.Key}:");
+                    PrintNestedDictionary(kvp.Value, indent+1);
+                }
+            }
+            else if (obj is IList list)
+            {
+                foreach (var item in list)
+                {
+                    PrintNestedDictionary(item, indent+1);
+                }
+            }
+            else
+            {
+                Console.WriteLine($"{indentStr}{obj}");
             }
         }
     }

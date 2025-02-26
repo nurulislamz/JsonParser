@@ -41,7 +41,7 @@ namespace JsonParser
             return true;
         }
 
-        public bool ParseJson()
+        private bool ParseJson()
         {
             ConsumeToken(JsonTokenType.CurlyOpen);
             jsonObject = ParseObject();
@@ -49,30 +49,33 @@ namespace JsonParser
         }
 
 
-        public Dictionary<string, object> ParseObject()
+        private Dictionary<string, object> ParseObject()
         {
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+
             // handle Empty Json
             if (GetCurrentJsonToken().Type == JsonTokenType.CurlyClose)
             {
                 ConsumeToken(JsonTokenType.CurlyClose);
-                return jsonObject;
+                return dict;
             }
 
             KeyValuePair<string, object> pair = ParsePair();
-            jsonObject.Add(pair.Key, pair.Value);
+            dict.Add(pair.Key, pair.Value);
 
             // handle KeyValue pair
             while (GetCurrentJsonToken().Type != JsonTokenType.CurlyClose)
             {
                 ConsumeToken(JsonTokenType.Comma);
                 pair = ParsePair();
-                jsonObject.Add(pair.Key, pair.Value);
+                dict.Add(pair.Key, pair.Value);
             } 
 
             ConsumeToken(JsonTokenType.CurlyClose);
-            return jsonObject;
+            return dict;
         }
-        public KeyValuePair<string, object> ParsePair()
+
+        private KeyValuePair<string, object> ParsePair()
         {
             if (GetCurrentJsonToken().Type != JsonTokenType.String) throw new InvalidOperationException("Excepted string for a key.");
 
@@ -83,7 +86,7 @@ namespace JsonParser
             return new KeyValuePair<string, object>(key,value);
         }
 
-        public object ParseValue()
+        private object ParseValue()
         {
             var current = GetCurrentJsonToken();
             switch (current.Type)
@@ -107,7 +110,7 @@ namespace JsonParser
             }
         }
 
-        public List<object> ParseArray()
+        private List<object> ParseArray()
         {
             List<object> arr = new List<object>();
             ConsumeToken(JsonTokenType.SquareOpen);
@@ -122,33 +125,33 @@ namespace JsonParser
         }
 
 
-        public int ParseNumber()
+        private int ParseNumber()
         {
             JsonToken token = ConsumeToken(JsonTokenType.Number);
             if (int.TryParse(token.Value, out int result)) return result;
             throw new Exception("Number is invalid. Check lexer");
         }
 
-        public string ParseString()
+        private string ParseString()
         {
             return ConsumeToken(JsonTokenType.String).Value;
         }
 
-        public bool ParseBoolean()
+        private bool ParseBoolean()
         {
             var token = ConsumeToken(JsonTokenType.Boolean);
             if (bool.TryParse(token.Value, out bool result)) return result;
             else throw new Exception("Could not parse Boolean");
         }
 
-        public object? ParseNull()
+        private object? ParseNull()
         {
             var token = ConsumeToken(JsonTokenType.Null);
             if (token?.Value == "null") return null; // default for reference types is null
             throw new Exception("Expected null token but found unexpected value.");
         }
 
-        public bool ValidateBrackets()
+        private bool ValidateBrackets()
         {
             for (int i = 0; i < this.jsonTokens.Count; i++)
             {
