@@ -1,21 +1,30 @@
 
 namespace JsonParser
 {
-    public class JsonParser
+    public interface IJsonParser
+    {
+        void SetTokens(List<JsonToken> tokens);
+        bool Parse();
+        Dictionary<string, object> GetJsonObject();
+    }
+    public class JsonParser : IJsonParser
     {
         private int position;
-        private readonly List<JsonToken> jsonTokens;
+        private List<JsonToken> jsonTokens;
         private Stack<JsonTokenType> bracketTrack;
 
         private Dictionary<string, object> jsonObject { get; set; }
 
-        public JsonParser(List<JsonToken> jsonTokens)
+        public JsonParser()
         {
             this.position = 0;
-            this.jsonTokens = jsonTokens;
-
             this.jsonObject = new Dictionary<string, object>();
             this.bracketTrack = new Stack<JsonTokenType>();
+        }
+
+        public void SetTokens(List<JsonToken> tokens)
+        {
+            jsonTokens = tokens;
         }
 
         private JsonToken GetCurrentJsonToken() => jsonTokens[position];

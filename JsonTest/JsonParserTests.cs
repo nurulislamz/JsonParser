@@ -10,7 +10,7 @@ public class JsonParserTests
         string jsonInput = "{}";
         JsonLexer lexer = new JsonLexer(jsonInput);
         List<JsonToken> listJsonTokens = lexer.Tokenize();
-        JsonParser.JsonParser jsonParser = new JsonParser.JsonParser(listJsonTokens);
+        JsonParser.JsonParser jsonParser = new JsonParser.JsonParser();
 
         // Act
         jsonParser.Parse();
@@ -28,7 +28,7 @@ public class JsonParserTests
         string jsonInput = "{ \"name\": \"ChatGPT\", \"age\": 4 }";
         JsonLexer lexer = new JsonLexer(jsonInput);
         List<JsonToken> listJsonTokens = lexer.Tokenize();
-        JsonParser.JsonParser jsonParser = new JsonParser.JsonParser(listJsonTokens);
+        JsonParser.JsonParser jsonParser = new JsonParser.JsonParser();
 
         // Act
         jsonParser.Parse();

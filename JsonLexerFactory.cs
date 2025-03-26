@@ -1,13 +1,19 @@
 namespace JsonParser
 {
-    public static class JsonLexerFactory
+
+    public interface IJsonLexerFactory
     {
-        public static JsonLexer CreateFromFile(string filePath)
+        JsonLexer CreateFromFile(string filePath);
+        JsonLexer CreateFromString(string json);
+    }
+    public class JsonLexerFactory  : IJsonLexerFactory
+    {
+        public JsonLexer CreateFromFile(string filePath)
         {
             return new JsonLexer(new FileJsonSource(filePath).GetJson());
         }
 
-        public static JsonLexer CreateFromString(string jsonString)
+        public JsonLexer CreateFromString(string jsonString)
         {
             return new JsonLexer(new StringJsonSource(jsonString).GetJson());
         }

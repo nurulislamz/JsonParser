@@ -6,21 +6,25 @@ using System.Threading.Tasks;
 
 namespace JsonParser
 {
-    public class JsonLexer
+    public interface IJsonLexer
+    {
+        List<JsonToken> Tokenize();
+    }
+
+    public class JsonLexer : IJsonLexer
     {
         private readonly string input;
         private int position { get; set; }
-
+        private List<JsonToken> tokens;
         public JsonLexer(string input)
         {
             this.input = input;
             this.position = 0;
+            this.tokens = new List<JsonToken>();
         }
 
         public List<JsonToken> Tokenize()
         {
-            var tokens = new List<JsonToken>();
-
             while (position < input.Length)
             {
                 char current = input[position];
